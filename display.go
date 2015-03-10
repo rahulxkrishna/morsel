@@ -26,6 +26,7 @@ func displayRSS(items []Item) error {
 		}
 		fmt.Fprint(box, "\n")
 	}
+
 	tm.Print(tm.MoveTo(box.String(), 10|tm.PCT, 10|tm.PCT))
 	tm.Flush()
 	return nil

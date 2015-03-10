@@ -79,6 +79,7 @@ func fetchRSS() ([]Item, error) {
 }
 
 func main() {
+
 	for {
 		rssList, _ := fetchRSS()
 		displayRSS(rssList)
