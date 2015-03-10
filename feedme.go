@@ -29,6 +29,7 @@ type Item struct {
 	Category string `xml:"category"`
 }
 
+// readConf reads the feeds list from the 'feedme.conf' file
 func readConf() ([]string, error) {
 	file, err := os.Open("feedme.conf")
 	if err != nil {

@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// displayRSS displays the RSS Items in a boxed format
 func displayRSS(items []Item) error {
 	tm.Clear()
 	box := tm.NewBox(80|tm.PCT, 200, 0)
