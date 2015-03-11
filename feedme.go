@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/xml"
-	"fmt"
+	_ "fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -46,44 +46,32 @@ func readConf() ([]string, error) {
 	return rssList, scanner.Err()
 }
 
-func fetchRSS() ([]Item, error) {
-	var rssText []Item
+func fetchRSS() ([]Channel, error) {
+	var feeds []Channel
 	rssList, _ := readConf()
-
-	numFeeds := len(rssList)
-	maxPerFeed := MAX_FEEDS / numFeeds
-	feedCount := 1
 
 	for _, src := range rssList {
 		response, err := http.Get(src)
 		if err != nil {
-			return rssText, err
+			return feeds, err
 		}
 
 		xdat, err := ioutil.ReadAll(response.Body)
 		var rss RSS
 		xml.Unmarshal(xdat, &rss)
 
-		for i, item := range rss.Channel.Items {
-			title := fmt.Sprintf("%d) %s\n", feedCount, item.Title)
-			desc := fmt.Sprintf("%s\n", item.Desc)
-			item := Item{title, desc, "", ""}
-			rssText = append(rssText, item)
-			if i > maxPerFeed {
-				break
-			}
-			feedCount++
-		}
+		feeds = append(feeds, rss.Channel)
+
 	}
 
-	return rssText, nil
+	return feeds, nil
 }
 
 func main() {
 
 	for {
-		rssList, _ := fetchRSS()
-		displayRSS(rssList)
+		feeds, _ := fetchRSS()
+		displayRSS(feeds)
 		time.Sleep(5 * time.Minute)
 	}
 }
