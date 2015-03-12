@@ -30,9 +30,9 @@ type Item struct {
 	Category string `xml:"category"`
 }
 
-// readConf reads the feeds list from the 'feedme.conf' file
+// readConf reads the feeds list from the 'morsel.conf' file
 func readConf() ([]string, error) {
-	file, err := os.Open("feedme.conf")
+	file, err := os.Open("morsel.conf")
 	if err != nil {
 		return nil, err
 	}
