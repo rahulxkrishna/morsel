@@ -7,10 +7,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
-const MAX_FEEDS = 24
+const MAX_FEEDS = 20
 
 type RSS struct {
 	Channel Channel `xml:"channel"`
@@ -40,7 +41,11 @@ func readConf() ([]string, error) {
 	var rssList []string
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		rssList = append(rssList, scanner.Text())
+		line := scanner.Text()
+		if (strings.Trim(line, " "))[0] == '#' {
+			continue
+		}
+		rssList = append(rssList, line)
 	}
 
 	return rssList, scanner.Err()

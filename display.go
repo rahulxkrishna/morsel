@@ -23,12 +23,15 @@ func displayRSS(feeds []Channel) error {
 			fmtString := fmt.Sprintf("%s%d%s", "%d) %-", contentWidth-contentWidth/4, "s %s")
 			title := strings.Trim(fmt.Sprintf(fmtString, feedCount, item.Title, "["+feed.Title+"]"), " \n")
 			desc := strings.Trim(fmt.Sprintf("%s", item.Desc), " \n")
-			descPrint := color.New(color.FgBlack, color.BgCyan).SprintFunc()
-			if len(title) > contentWidth-12 {
-				title = title[0 : contentWidth-12]
+			descPrint := color.New(color.FgBlack, color.BgBlue).SprintFunc()
+			formattedDesc := descPrint(desc)
+
+			if len(title) > contentWidth-1 {
+				title = title[0 : contentWidth-1]
 			}
-			if len(desc) > contentWidth-12 {
-				desc = desc[0 : contentWidth-12]
+			if len(formattedDesc) > contentWidth-1 {
+				// We have to account for the length of the ASCII codes to be added to the desc string further down
+				desc = desc[0 : contentWidth-(len(formattedDesc)-len(desc))-1]
 			}
 			fmt.Fprint(box, title+"\n")
 			fmt.Fprint(box, descPrint(desc)+"\n")
