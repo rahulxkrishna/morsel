@@ -9,35 +9,33 @@ import (
 	"strings"
 )
 
-type Feed struct {
-	Id     int
-	Source string
-	Title  string
-	Link   string
+type View struct {
+	model *Model
+	ctrlr *Controller
 }
 
-func clearScreen() {
+func (v *View) Init(m *Model, c *Controller) {
+	v.model = m
+	v.ctrlr = c
+}
+
+func (v *View) clearScreen() {
 	c := exec.Command("clear")
 	c.Stdout = os.Stdout
 	c.Run()
 }
 
-func openLink(link string) {
-	c := exec.Command("open", link)
-	c.Stdout = os.Stdout
-	c.Run()
-}
-
-func runView() {
+func (v *View) run() {
 	var option string
-	getNextFeeds()
+	v.ctrlr.getNextFeeds()
 	for {
 		fmt.Scanln(&option)
-		handleInput(option)
+		v.ctrlr.handleInput(option)
+		option = ""
 	}
 }
 
-func displayFeeds(feeds []Feed) error {
+func (v *View) displayFeeds(feeds []Feed) error {
 	w, _, err := terminal.GetSize(int(os.Stdout.Fd()))
 
 	if err != nil {
@@ -45,7 +43,7 @@ func displayFeeds(feeds []Feed) error {
 		return nil
 	}
 
-	clearScreen()
+	v.clearScreen()
 
 	wShift := w / 5
 	hdrFmt := fmt.Sprintf("%s%d%s", "%", w/2-3, "s")

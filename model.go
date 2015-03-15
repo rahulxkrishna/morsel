@@ -9,10 +9,6 @@ import (
 	"strings"
 )
 
-const MAX_FEEDS = 20
-
-var morsels []Channel
-
 type RSS struct {
 	Channel Channel `xml:"channel"`
 }
@@ -30,8 +26,20 @@ type Item struct {
 	Category string `xml:"category"`
 }
 
+type Feed struct {
+	Id     int
+	Source string
+	Title  string
+	Desc   string
+	Link   string
+}
+
+type Model struct {
+	feeds []Feed
+}
+
 // readConf reads the feeds list from the 'morsel.conf' file
-func readConf() ([]string, error) {
+func (m *Model) readConf() ([]string, error) {
 	file, err := os.Open("morsel.conf")
 	if err != nil {
 		return nil, err
@@ -51,22 +59,48 @@ func readConf() ([]string, error) {
 	return rssList, scanner.Err()
 }
 
-func getFeeds() error {
-	rssList, _ := readConf()
+func (m *Model) getFeed(id int) (Feed, error) {
+	return m.feeds[id], nil
+}
+
+func (m *Model) getFeeds() ([]Feed, error) {
+	return m.feeds, nil
+}
+
+func sanitize(desc string) string {
+	i := strings.Index(desc, "<img")
+	if i >= 0 {
+		desc = desc[0:i]
+	}
+	desc = strings.Trim(desc, " \n")
+	return desc
+}
+
+func (m *Model) refreshFeeds() error {
+	rssList, _ := m.readConf()
+	id := 0
 
 	for _, src := range rssList {
 		response, err := http.Get(src)
 		if err != nil {
-			return err
+			return nil
 		}
 
 		xdat, err := ioutil.ReadAll(response.Body)
 		var rss RSS
 		xml.Unmarshal(xdat, &rss)
 
-		morsels = append(morsels, rss.Channel)
-
+		for _, item := range rss.Channel.Items {
+			item.Desc = sanitize(item.Desc)
+			m.feeds = append(m.feeds, Feed{id, rss.Channel.Title, item.Title, item.Desc, item.Link})
+			id++
+		}
 	}
 
+	return nil
+}
+
+func (m *Model) run() error {
+	m.refreshFeeds()
 	return nil
 }
