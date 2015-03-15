@@ -11,6 +11,8 @@ import (
 
 const MAX_FEEDS = 20
 
+var morsels []Channel
+
 type RSS struct {
 	Channel Channel `xml:"channel"`
 }
@@ -49,23 +51,22 @@ func readConf() ([]string, error) {
 	return rssList, scanner.Err()
 }
 
-func fetchRSS() ([]Channel, error) {
-	var feeds []Channel
+func getFeeds() error {
 	rssList, _ := readConf()
 
 	for _, src := range rssList {
 		response, err := http.Get(src)
 		if err != nil {
-			return feeds, err
+			return err
 		}
 
 		xdat, err := ioutil.ReadAll(response.Body)
 		var rss RSS
 		xml.Unmarshal(xdat, &rss)
 
-		feeds = append(feeds, rss.Channel)
+		morsels = append(morsels, rss.Channel)
 
 	}
 
-	return feeds, nil
+	return nil
 }

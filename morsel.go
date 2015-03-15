@@ -1,14 +1,13 @@
 package main
 
 import (
-	"time"
+//"time"
 )
 
 func main() {
 
-	for {
-		feeds, _ := fetchRSS()
-		displayRSS(feeds)
-		time.Sleep(5 * time.Minute)
-	}
+	//TODO spawn of goroutines to handle each operation
+
+	getFeeds() //TODO error handling
+	runView()
 }
