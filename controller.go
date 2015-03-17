@@ -7,8 +7,6 @@ import (
 	"strconv"
 )
 
-const MAX_FEEDS = 25
-
 type Controller struct {
 	curPos int
 	model  *Model
@@ -23,8 +21,8 @@ func (c *Controller) Init(m *Model, v *View) {
 func (c *Controller) refreshFeeds() {
 	n := c.view.height / 2
 	feeds, _ := c.model.getFeeds()
-
 	c.curPos -= n
+
 	if c.curPos < 0 {
 		c.curPos = 0
 	}
@@ -34,7 +32,6 @@ func (c *Controller) refreshFeeds() {
 
 func (c *Controller) getNextFeeds() {
 	n := c.view.height / 2
-
 	feeds, _ := c.model.getFeeds()
 
 	if c.curPos >= len(feeds) {
@@ -44,7 +41,6 @@ func (c *Controller) getNextFeeds() {
 	if c.curPos+n > len(feeds) {
 		n = len(feeds) - c.curPos
 	}
-
 	c.view.displayFeeds(feeds[c.curPos : c.curPos+n])
 	c.curPos += n
 }
