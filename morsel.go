@@ -5,15 +5,14 @@ import (
 )
 
 func main() {
-
 	//TODO spawn of goroutines to handle each operation
 
 	m := &Model{}
 	c := &Controller{}
 	v := &View{}
 
-	c.Init(m, v)
 	v.Init(m, c)
+	c.Init(m, v)
 
 	m.run()
 	v.run()

@@ -10,13 +10,48 @@ import (
 )
 
 type View struct {
-	model *Model
-	ctrlr *Controller
+	model  *Model
+	ctrlr  *Controller
+	height int
+	width  int
+}
+
+const head = "[MORSEL]"
+
+func (v *View) getTermSz() {
+	w, h, err := terminal.GetSize(int(os.Stdout.Fd()))
+
+	if err != nil {
+		fmt.Println("Using default values")
+		v.width = 200
+		v.height = 50
+	} else {
+		v.width = w
+		v.height = h - 4
+	}
+
+	//width := os.Getenv("COLUMNS")
+	//if width != "" {
+	//v.width, _ = strconv.Atoi(width)
+	//} else {
+	//fmt.Println("Unable to get terminal width, using width = 204")
+	//v.width = 200
+	//}
+
+	//height := os.Getenv("LINES")
+	//if height != "" {
+	//v.height, _ = strconv.Atoi(height)
+	//v.height -= 4
+	//} else {
+	//fmt.Println("Unable to get terminal height, using height = 55")
+	//v.height = 50
+	//}
 }
 
 func (v *View) Init(m *Model, c *Controller) {
 	v.model = m
 	v.ctrlr = c
+	v.getTermSz()
 }
 
 func (v *View) clearScreen() {
@@ -36,20 +71,20 @@ func (v *View) run() {
 }
 
 func (v *View) displayFeeds(feeds []Feed) error {
-	w, _, err := terminal.GetSize(int(os.Stdout.Fd()))
-
-	if err != nil {
-		fmt.Println(err)
-		return nil
-	}
+	left := 0
+	right := 0
 
 	v.clearScreen()
 
-	wShift := w / 5
-	hdrFmt := fmt.Sprintf("%s%d%s", "%", w/2-3, "s")
-	titleFmt := fmt.Sprintf("%s%d%s%d%s", "%", wShift, "d %-", 90, "s %s")
+	if v.width > 110 {
+		left = v.width / 5
+		right = 90
+	}
 
-	fmt.Printf(hdrFmt, color.RedString("[MORSEL]")+"\n\n")
+	hdrFmt := fmt.Sprintf("%s%d%s", "%", v.width/2+len(head)/2, "s")
+	titleFmt := fmt.Sprintf("%s%d%s%d%s", "%", left, "d %-", right, "s %s")
+
+	fmt.Printf(hdrFmt, color.RedString(head)+"\n\n")
 
 	for _, feed := range feeds {
 		title := strings.Trim(feed.Title, " \n")

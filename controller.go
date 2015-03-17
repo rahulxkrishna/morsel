@@ -26,7 +26,8 @@ func (c *Controller) refreshFeeds() {
 }
 
 func (c *Controller) getNextFeeds() {
-	n := MAX_FEEDS
+	//n := MAX_FEEDS
+	n := c.view.height / 2
 
 	feeds, _ := c.model.getFeeds()
 
