@@ -29,23 +29,6 @@ func (v *View) getTermSz() {
 		v.width = w
 		v.height = h - 4
 	}
-
-	//width := os.Getenv("COLUMNS")
-	//if width != "" {
-	//v.width, _ = strconv.Atoi(width)
-	//} else {
-	//fmt.Println("Unable to get terminal width, using width = 204")
-	//v.width = 200
-	//}
-
-	//height := os.Getenv("LINES")
-	//if height != "" {
-	//v.height, _ = strconv.Atoi(height)
-	//v.height -= 4
-	//} else {
-	//fmt.Println("Unable to get terminal height, using height = 55")
-	//v.height = 50
-	//}
 }
 
 func (v *View) Init(m *Model, c *Controller) {

@@ -21,12 +21,18 @@ func (c *Controller) Init(m *Model, v *View) {
 }
 
 func (c *Controller) refreshFeeds() {
+	n := c.view.height / 2
 	feeds, _ := c.model.getFeeds()
-	c.view.displayFeeds(feeds[c.curPos-MAX_FEEDS : c.curPos])
+
+	c.curPos -= n
+	if c.curPos < 0 {
+		c.curPos = 0
+	}
+	c.view.displayFeeds(feeds[c.curPos : c.curPos+n])
+	c.curPos += n
 }
 
 func (c *Controller) getNextFeeds() {
-	//n := MAX_FEEDS
 	n := c.view.height / 2
 
 	feeds, _ := c.model.getFeeds()
@@ -44,7 +50,15 @@ func (c *Controller) getNextFeeds() {
 }
 
 func (c *Controller) getPrevFeeds() {
-	//displayFeeds(morsels)
+	n := c.view.height / 2
+	feeds, _ := c.model.getFeeds()
+	c.curPos -= 2 * n
+
+	if c.curPos < 0 {
+		c.curPos = len(feeds) - n
+	}
+	c.view.displayFeeds(feeds[c.curPos : c.curPos+n])
+	c.curPos += n
 }
 
 func (c *Controller) openLink(ip string) {
