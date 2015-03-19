@@ -10,28 +10,28 @@ import (
 type Controller struct {
 	curPos int
 	model  *Model
-	view   *View
+	view   MView
 }
 
-func (c *Controller) Init(m *Model, v *View) {
+func (c *Controller) Init(m *Model, v MView) {
 	c.model = m
 	c.view = v
 }
 
 func (c *Controller) refreshFeeds() {
-	n := c.view.height / 2
+	n := c.view.Maxlines() / 2
 	feeds, _ := c.model.getFeeds()
 	c.curPos -= n
 
 	if c.curPos < 0 {
 		c.curPos = 0
 	}
-	c.view.displayFeeds(feeds[c.curPos : c.curPos+n])
+	c.view.DisplayFeeds(feeds[c.curPos : c.curPos+n])
 	c.curPos += n
 }
 
 func (c *Controller) getNextFeeds() {
-	n := c.view.height / 2
+	n := c.view.Maxlines() / 2
 	feeds, _ := c.model.getFeeds()
 
 	if c.curPos >= len(feeds) {
@@ -41,19 +41,19 @@ func (c *Controller) getNextFeeds() {
 	if c.curPos+n > len(feeds) {
 		n = len(feeds) - c.curPos
 	}
-	c.view.displayFeeds(feeds[c.curPos : c.curPos+n])
+	c.view.DisplayFeeds(feeds[c.curPos : c.curPos+n])
 	c.curPos += n
 }
 
 func (c *Controller) getPrevFeeds() {
-	n := c.view.height / 2
+	n := c.view.Maxlines() / 2
 	feeds, _ := c.model.getFeeds()
 	c.curPos -= 2 * n
 
 	if c.curPos < 0 {
 		c.curPos = len(feeds) - n
 	}
-	c.view.displayFeeds(feeds[c.curPos : c.curPos+n])
+	c.view.DisplayFeeds(feeds[c.curPos : c.curPos+n])
 	c.curPos += n
 }
 

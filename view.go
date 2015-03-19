@@ -9,7 +9,14 @@ import (
 	"strings"
 )
 
-type View struct {
+type MView interface {
+	Init(m *Model, c *Controller)
+	Run()
+	DisplayFeeds(feeds []Feed) error
+	Maxlines() int
+}
+
+type CLView struct {
 	model  *Model
 	ctrlr  *Controller
 	height int
@@ -18,7 +25,7 @@ type View struct {
 
 const head = "[MORSEL]"
 
-func (v *View) getTermSz() {
+func (v *CLView) getTermSz() {
 	w, h, err := terminal.GetSize(int(os.Stdout.Fd()))
 
 	if err != nil {
@@ -31,19 +38,19 @@ func (v *View) getTermSz() {
 	}
 }
 
-func (v *View) Init(m *Model, c *Controller) {
+func (v *CLView) Init(m *Model, c *Controller) {
 	v.model = m
 	v.ctrlr = c
 	v.getTermSz()
 }
 
-func (v *View) clearScreen() {
+func (v *CLView) clearScreen() {
 	c := exec.Command("clear")
 	c.Stdout = os.Stdout
 	c.Run()
 }
 
-func (v *View) run() {
+func (v *CLView) Run() {
 	var option string
 	v.ctrlr.getNextFeeds()
 	for {
@@ -53,7 +60,11 @@ func (v *View) run() {
 	}
 }
 
-func (v *View) displayFeeds(feeds []Feed) error {
+func (v *CLView) Maxlines() int {
+	return v.height
+}
+
+func (v *CLView) DisplayFeeds(feeds []Feed) error {
 	left := 0
 	right := 0
 
@@ -61,7 +72,7 @@ func (v *View) displayFeeds(feeds []Feed) error {
 
 	if v.width > 110 {
 		left = v.width / 5
-		right = 90
+		right = 100
 	}
 
 	hdrFmt := fmt.Sprintf("%s%d%s", "%", v.width/2+len(head)/2, "s")
