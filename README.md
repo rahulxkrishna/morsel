@@ -1,3 +1,3 @@
 # morsel
 
-Morsel is a minimal RSS feed reader for the command line.
+Morsel is a minimalistic RSS feed reader for the command line.
